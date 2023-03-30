@@ -1,6 +1,6 @@
 package com.webtracker.app.model.states.github;
 
-import com.webtracker.app.model.observers.ObserverManager;
+import com.webtracker.app.model.observers.manager.GitHubObserverManager;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -15,11 +15,18 @@ public class GitHubState {
     private int gitHubStateId;
     private GitHubOwner owner;
     private List<GitHubRepository> repositories;
+    private String gitHubAccountDescription;
+
     // holds observers
-    private ObserverManager<GitHubState> observerManager;
+    private GitHubObserverManager observerManager = new GitHubObserverManager();
 
     public void setRepositories(List<GitHubRepository> newRepositories) {
         this.repositories = newRepositories;
-        this.observerManager.notify(ObserverManager.EventType.ADDITION, this);
+        this.observerManager.notify(GitHubObserverManager.GitHubConsideredActions.REPOSITORY_CHANGE, this);
+    }
+
+    public void setGitHubAccountDescription(String newDescription) {
+        this.gitHubAccountDescription = newDescription;
+        this.observerManager.notify(GitHubObserverManager.GitHubConsideredActions.DESCRIPTION_CHANGE, this);
     }
 }

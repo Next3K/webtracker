@@ -1,4 +1,4 @@
-package com.webtracker.app.model.observers;
+package com.webtracker.app.model.observers.observer;
 
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.states.github.GitHubState;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GitHubCommitObserver extends Observer<GitHubState> {
     @Override
-    void update(GitHubState newState) {
+    protected List<Event> detectEvents(GitHubState newState) {
         // check what has changed
 
         // create events based on the changes
@@ -16,8 +16,6 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
         // add events to the list
         collectedEvents.addAll(whatHappened);
-
-        // update old state
-        this.oldState = newState;
+        return null;
     }
 }

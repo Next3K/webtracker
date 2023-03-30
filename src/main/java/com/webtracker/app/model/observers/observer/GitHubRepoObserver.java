@@ -1,4 +1,4 @@
-package com.webtracker.app.model.observers;
+package com.webtracker.app.model.observers.observer;
 
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.states.github.GitHubRepository;
@@ -10,9 +10,10 @@ import java.util.List;
 /**
  * Observes changes in repositories, saves events to collectedEvents field
  */
-public class GitHubRepoObserver extends Observer<GitHubState>{
+public class GitHubRepoObserver extends Observer<GitHubState> {
+
     @Override
-    void update(GitHubState newState) {
+    protected List<Event> detectEvents(GitHubState newState) {
         // check what has changed
         List<GitHubRepository> newRepositories = newState.getRepositories();
         List<GitHubRepository> oldRepositories = this.oldState.getRepositories();
@@ -22,8 +23,6 @@ public class GitHubRepoObserver extends Observer<GitHubState>{
 
         // add events to the list
         collectedEvents.addAll(whatHappened);
-
-        // update old state
-        this.oldState = newState;
+        return whatHappened;
     }
 }

@@ -17,4 +17,5 @@ import java.util.List;
 public class GitHubRepository {
     private List<GitHubCommit> commits;
     private CodingLanguage codingLanguage;
+    private String description;
 }

@@ -7,7 +7,7 @@ public class GitHubApi {
 
     // call git hub api for given username
     public static GitHubState callApi(GitHubOwner owner){
-        String username = owner.username();
+//        String username = owner.username();
         return new GitHubState();
     }
 

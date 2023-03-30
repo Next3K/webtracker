@@ -3,6 +3,7 @@ package com.webtracker.app;
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.events.EventProvider;
 import com.webtracker.app.model.events.GitHubEventProvider;
+import com.webtracker.app.model.observers.manager.GitHubObserverManager;
 import com.webtracker.app.model.states.github.GitHubState;
 import com.webtracker.app.model.jobs.GitHubJob;
 import com.webtracker.app.model.jobs.Job;
@@ -22,15 +23,17 @@ public class AppApplication {
         EventProvider<GitHubState> gitHubStateEventProvider = new GitHubEventProvider();
 
         // get job from database
-        Job<GitHubState> trackSomeGitHubUserJob = new GitHubJob();
+        Job<GitHubState> trackSomeGitHubUserJob = new GitHubJob(new GitHubState(), 10);
 
         // get target of the job
-        GitHubState gitHubState = trackSomeGitHubUserJob.getJobTarget();
+        GitHubState oldGitHubState = trackSomeGitHubUserJob.getJobTarget();
+
 
         // get events
-        List<Event<GitHubState>> events = gitHubStateEventProvider.getEvents(gitHubState);
+        List<Event> whatHappened = gitHubStateEventProvider.getEvents(oldGitHubState);
 
         // save these events into the database
+        System.out.println(whatHappened);
     }
 
 }

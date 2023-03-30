@@ -1,5 +1,6 @@
 package com.webtracker.app.model.events;
 
+import com.webtracker.app.model.observers.manager.GitHubObserverManager;
 import com.webtracker.app.model.states.github.GitHubState;
 
 import java.util.List;
