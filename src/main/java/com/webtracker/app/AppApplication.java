@@ -3,7 +3,6 @@ package com.webtracker.app;
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.events.EventProvider;
 import com.webtracker.app.model.events.GitHubEventProvider;
-import com.webtracker.app.model.observers.manager.GitHubObserverManager;
 import com.webtracker.app.model.states.github.GitHubState;
 import com.webtracker.app.model.jobs.GitHubJob;
 import com.webtracker.app.model.jobs.Job;
