@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manager of observers
+ * @param <T> type of class to observe
+ * @param <E> type of events
+ */
 public class ObserverManager<T, E> {
     Map<E, List<Observer<T>>> observersByType;
     Set<E> enumValues;
