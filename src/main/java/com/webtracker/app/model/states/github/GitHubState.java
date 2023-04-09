@@ -13,6 +13,7 @@ import java.util.List;
 @ToString
 public class GitHubState {
     private int gitHubStateId;
+    private String observatorEmail;
     private GitHubOwner owner;
     private List<GitHubRepository> repositories;
     private String gitHubAccountDescription;
