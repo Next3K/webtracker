@@ -20,4 +20,7 @@ public class TrackUserDto {
     @NotNull
     private List<String> technologies;
 
+    @NotBlank
+    private String email;
+
 }
