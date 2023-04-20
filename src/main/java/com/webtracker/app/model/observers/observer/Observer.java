@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Observer<T> {
-    T oldState;
-    List<Event> collectedEvents = new ArrayList<>();
+    protected T oldState;
+    protected List<Event> collectedEvents = new ArrayList<>();
 
     protected abstract List<Event> detectEvents(T newState);
 

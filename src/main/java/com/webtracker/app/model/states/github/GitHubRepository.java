@@ -16,6 +16,8 @@ import java.util.List;
 @ToString
 public class GitHubRepository {
     private List<GitHubCommit> commits;
-    private CodingLanguage codingLanguage;
+    private List<CodingLanguage> codingLanguages;
     private String description;
+    private Integer repositoryID;
+    private String url;
 }
