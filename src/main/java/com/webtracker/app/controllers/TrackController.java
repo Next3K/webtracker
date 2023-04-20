@@ -16,14 +16,16 @@ public class TrackController {
 
 
     @PostMapping()
-    public ResponseEntity<?> addUserToTrack(@Valid @RequestBody TrackUserDto trackUserDto) {
-        return ResponseEntity.ok("User + " + trackUserDto.getGithubUsername() + " added to track");
+    public ResponseEntity<String> addUserToTrack(@Valid @RequestBody TrackUserDto trackUserDto) {
+        return ResponseEntity.status(201)
+                .body("User + " + trackUserDto.getGithubUsername() + " added to track");
     }
 
     @DeleteMapping()
-    public ResponseEntity<?> removeUserFromTrack(@Valid @RequestBody DeleteUserDto deleteUserDto) {
-        return ResponseEntity
-                .ok("User + " + deleteUserDto.getGithubUsername() + " removed from track");
+    public ResponseEntity<String> removeUserFromTrack(
+            @Valid @RequestBody DeleteUserDto deleteUserDto) {
+        return ResponseEntity.status(204)
+                .body("User + " + deleteUserDto.getGithubUsername() + " removed from track");
     }
 
 
