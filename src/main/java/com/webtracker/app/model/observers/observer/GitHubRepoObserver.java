@@ -7,15 +7,21 @@ import com.webtracker.app.model.states.github.GitHubState;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Observes changes in repositories, saves events to collectedEvents field
+ * Observes changes in repositories, creates a list of events by comparing old and new states
  */
 @Log
 public class GitHubRepoObserver extends Observer<GitHubState> {
+
+    private final Set<CodingLanguage> interestingLanguages;
+
+    public GitHubRepoObserver(Set<CodingLanguage> interestingLanguages) {
+        this.interestingLanguages = interestingLanguages;
+    }
 
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
@@ -26,19 +32,17 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
         // create events list based on the changes
         List<Event> whatHappened = new ArrayList<>();
 
-        List<Integer> oldRepositoryIds = oldRepositories.stream()
+        Set<Integer> oldRepositoryIds = oldRepositories.stream()
                 .map(GitHubRepository::getRepositoryID)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         newRepositories = newRepositories.stream().filter(gitHubRepository -> !oldRepositoryIds.contains(gitHubRepository.getRepositoryID())).toList();
 
         if (!newRepositories.isEmpty()) {
             log.info("Changes in repository list detected");
 
-            List<CodingLanguage> codingLanguages = newState.getRepositories().get(newState.getGitHubStateId()).getCodingLanguages();
-
             List<GitHubRepository> filteredRepositories = newRepositories.stream()
-                    .filter(repo -> repo.getCodingLanguages().stream().anyMatch(codingLanguages::contains))
+                    .filter(repo -> repo.getCodingLanguages().stream().anyMatch(interestingLanguages::contains))
                     .toList();
 
             for (GitHubRepository repo : filteredRepositories) {
@@ -50,10 +54,9 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
                         .build();
                 whatHappened.add(event);
             }
-            collectedEvents.addAll(whatHappened);
-            return collectedEvents;
+            return whatHappened;
         }
         log.info("Nothing happened");
-        return collectedEvents;
+        return whatHappened;
     }
 }
