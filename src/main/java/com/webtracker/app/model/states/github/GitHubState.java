@@ -25,9 +25,4 @@ public class GitHubState {
         this.repositories = newRepositories;
         this.observerManager.notify(GitHubObserverManager.GitHubConsideredActions.REPOSITORY_CHANGE, this);
     }
-
-    public void setGitHubAccountDescription(String newDescription) {
-        this.gitHubAccountDescription = newDescription;
-        this.observerManager.notify(GitHubObserverManager.GitHubConsideredActions.DESCRIPTION_CHANGE, this);
-    }
 }
