@@ -26,7 +26,7 @@ public class GitHubObserverManager extends ObserverManager<GitHubState, GitHubOb
     // what observers for each action
     private static final Map<GitHubConsideredActions, List<Observer<GitHubState>>> map =
             Map.of(GitHubConsideredActions.REPOSITORY_CHANGE, List.of(new GitHubRepoObserver(codingLanguages)),
-                    GitHubConsideredActions.COMMIT_CHANGE, List.of(new GitHubCommitObserver()));
+                    GitHubConsideredActions.COMMIT_CHANGE, List.of(new GitHubCommitObserver(codingLanguages)));
 
 
     public GitHubObserverManager() {
