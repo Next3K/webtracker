@@ -1,21 +1,64 @@
 package com.webtracker.app.model.observers.observer;
 
 import com.webtracker.app.model.events.Event;
+import com.webtracker.app.model.states.github.CodingLanguage;
+import com.webtracker.app.model.states.github.GitHubCommit;
+import com.webtracker.app.model.states.github.GitHubRepository;
 import com.webtracker.app.model.states.github.GitHubState;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Log
 public class GitHubCommitObserver extends Observer<GitHubState> {
+
+    private final Set<CodingLanguage> interestingLanguages;
+
+    public GitHubCommitObserver(Set<CodingLanguage> interestingLanguages) {
+        this.interestingLanguages = interestingLanguages;
+    }
+
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
         // check what has changed
+        List<GitHubCommit> newCommits = new ArrayList<>();
+        for (GitHubRepository repo : newState.getRepositories()) {
+            newCommits.addAll(repo.getCommits());
+        }
+
+        List<GitHubCommit> oldCommits = new ArrayList<>();
+        for (GitHubRepository repo : this.oldState.getRepositories()) {
+            oldCommits.addAll(repo.getCommits());
+        }
 
         // create events based on the changes
         List<Event> whatHappened = new ArrayList<>();
 
-        // add events to the list
-        collectedEvents.addAll(whatHappened);
-        return null;
+        Set<String> oldCommitsIds = oldCommits.stream().map(GitHubCommit::getCommitSha).collect(Collectors.toSet());
+
+        newCommits = newCommits.stream().filter(gitHubCommit -> !oldCommitsIds.contains(gitHubCommit.getCommitSha())).toList();
+
+        if (!newCommits.isEmpty()) {
+            log.info("New commits detected");
+
+            List<GitHubCommit> filteredCommits = newCommits.stream().filter(commit -> commit.getCodingLanguages().stream().anyMatch(interestingLanguages::contains)).toList();
+
+            for (GitHubCommit commit : filteredCommits) {
+                Event event = Event.builder()
+                        .emailToSendEvent(newState.getObservatorEmail())
+                        .eventTitle("New commit")
+                        .githubUsername(newState.getOwner().username())
+                        .eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))
+                        .build();
+                whatHappened.add(event);
+            }
+            return whatHappened;
+        }
+
+        log.info("No new commits detected");
+        return whatHappened;
     }
 }
