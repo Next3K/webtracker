@@ -12,12 +12,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
 public class GitHubApi {
 
+    private static final String USERNAME = "";
+    private static final String TOKEN = "";
     public static GitHubState callApi(GitHubOwner owner){
         List<GitHubRepository> repositoriesList = new ArrayList<>();
         String username=owner.username();
@@ -33,6 +37,7 @@ public class GitHubApi {
     }
     public static String call(String url){
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
+                .header("Authorization", "Basic " + encodeCredentials(USERNAME, TOKEN))
                 .method("GET",HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = null;
@@ -77,5 +82,11 @@ public class GitHubApi {
         repository.setCodingLanguages(null);
         repository.setCommits(getCommitsInfo(user, repoName));
         return repository;
+    }
+
+    private static String encodeCredentials(String username, String token) {
+        String credentials = username + ":" + token;
+        byte[] credentialsBytes = credentials.getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(credentialsBytes);
     }
 }
