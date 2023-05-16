@@ -18,9 +18,17 @@ import java.util.Objects;
 
 public class GitHubApi {
 
-    // call git hub api for given username
     public static GitHubState callApi(GitHubOwner owner){
-//        String username = owner.username();
+        List<GitHubRepository> repositoriesList = new ArrayList<>();
+        String username=owner.username();
+        String repositories = call("https://api.github.com/users/"+username+"/repos");
+        JSONArray repos = new JSONArray(repositories);
+        for (int i = 0; i < repos.length(); i++) {
+            JSONObject repo = repos.getJSONObject(i);
+            String repoName = repo.getString("name");
+            repositoriesList.add(getRepoInfo(username,repoName));
+        }
+        //Here create new GitHubState and fill it with proper data, then return
         return new GitHubState();
     }
     public static String call(String url){
