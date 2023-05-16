@@ -1,9 +1,6 @@
 package com.webtracker.app.model.events;
 
-import com.webtracker.app.model.states.github.GitHubCommit;
-import com.webtracker.app.model.states.github.GitHubOwner;
-import com.webtracker.app.model.states.github.GitHubRepository;
-import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.model.states.github.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -70,18 +67,32 @@ public class GitHubApi {
     }
 
     public static GitHubRepository getRepoInfo(String user, String repoName){
-        GitHubRepository repository = new GitHubRepository();
+        GitHubRepository gitHubRepository = new GitHubRepository();
         String repoResponse = call("https://api.github.com/repos/"+user+"/"+repoName);
-        JSONObject repObject=new JSONObject(repoResponse);
-        String langResponse = call("https://api.github.com/repos/"+user+"/"+repoName+"/languages");
-        JSONObject langs = new JSONObject(langResponse);
-        List<String> languages = new ArrayList<>(langs.keySet());
-        repository.setDescription(repObject.get("description").toString());
-        repository.setRepositoryID(repObject.getInt("id"));
-        repository.setUrl(repObject.getString("html_url"));
-        repository.setCodingLanguages(null);
-        repository.setCommits(getCommitsInfo(user, repoName));
-        return repository;
+        JSONObject repositoryObject=new JSONObject(repoResponse);
+        String languagesResponse = call("https://api.github.com/repos/"+user+"/"+repoName+"/languages");
+        JSONObject languagesObject = new JSONObject(languagesResponse);
+        List<String> languages = new ArrayList<>(languagesObject.keySet());
+        List<CodingLanguage> enumLanguages = new ArrayList<>();
+        for (String lang : languages) {
+            switch (lang){
+                case "C++": lang = "Cpp";
+                case "C#": lang = "Csharp";
+                case "Objective-C": lang = "Objective_C";
+            }
+            try {
+                CodingLanguage enumValue = CodingLanguage.valueOf(lang);
+                enumLanguages.add(enumValue);
+            }
+            catch (Exception ignored) {
+            }
+        }
+        gitHubRepository.setDescription(repositoryObject.get("description").toString());
+        gitHubRepository.setRepositoryID(repositoryObject.getInt("id"));
+        gitHubRepository.setUrl(repositoryObject.getString("html_url"));
+        gitHubRepository.setCodingLanguages(null);
+        gitHubRepository.setCommits(getCommitsInfo(user, repoName));
+        return gitHubRepository;
     }
 
     private static String encodeCredentials(String username, String token) {
