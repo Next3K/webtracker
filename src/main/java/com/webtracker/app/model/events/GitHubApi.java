@@ -2,6 +2,7 @@ package com.webtracker.app.model.events;
 
 import com.webtracker.app.model.states.github.GitHubCommit;
 import com.webtracker.app.model.states.github.GitHubOwner;
+import com.webtracker.app.model.states.github.GitHubRepository;
 import com.webtracker.app.model.states.github.GitHubState;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,5 +54,20 @@ public class GitHubApi {
             commitsList.add(gitHubCommit);
         }
         return commitsList;
+    }
+
+    public static GitHubRepository getRepoInfo(String user, String repoName){
+        GitHubRepository repository = new GitHubRepository();
+        String repoResponse = call("https://api.github.com/repos/"+user+"/"+repoName);
+        JSONObject repObject=new JSONObject(repoResponse);
+        String langResponse = call("https://api.github.com/repos/"+user+"/"+repoName+"/languages");
+        JSONObject langs = new JSONObject(langResponse);
+        List<String> languages = new ArrayList<>(langs.keySet());
+        repository.setDescription(repObject.get("description").toString());
+        repository.setRepositoryID(repObject.getInt("id"));
+        repository.setUrl(repObject.getString("html_url"));
+        repository.setCodingLanguages(null);
+        repository.setCommits(getCommitsInfo(user, repoName));
+        return repository;
     }
 }
