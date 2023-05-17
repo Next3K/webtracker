@@ -44,7 +44,15 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
         if (!newCommits.isEmpty()) {
             log.info("New commits detected");
 
-            List<GitHubCommit> filteredCommits = newCommits.stream().filter(commit -> commit.getCodingLanguages().stream().anyMatch(interestingLanguages::contains)).toList();
+            List<GitHubRepository> filteredRepositories = newState.getRepositories().stream()
+                    .filter(repo -> repo.getCodingLanguages().stream().anyMatch(interestingLanguages::contains))
+                    .toList();
+
+            List<GitHubCommit> filteredCommits = new ArrayList<>();
+
+            for (GitHubRepository repo: filteredRepositories) {
+                filteredCommits.add((GitHubCommit) repo.getCommits());
+            }
 
             for (GitHubCommit commit : filteredCommits) {
                 Event event = Event.builder()
