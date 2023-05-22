@@ -1,8 +1,11 @@
 package com.webtracker.app.dto.track;
 
+import com.webtracker.app.model.states.github.CodingLanguage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +21,12 @@ public class TrackUserDto {
     private String githubUsername;
 
     @NotNull
-    private List<String> technologies;
+    private Set<CodingLanguage> technologies;
 
     @NotBlank
     private String email;
+
+    @NotNull
+    private TrackType trackType;
 
 }
