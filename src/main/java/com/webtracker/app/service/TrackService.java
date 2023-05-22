@@ -1,7 +1,7 @@
 package com.webtracker.app.service;
 
-import com.webtracker.app.model.events.EventProvider;
-import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.dto.track.TrackUserDto;
+import com.webtracker.app.model.events.GitHubApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TrackService {
 
-    final EventProvider<GitHubState> eventProvider;
+    final GitHubApi gitHubApi;
+
+    void addToTrack(TrackUserDto trackUserDto) {
+        gitHubApi.callApi(trackUserDto);
+    }
+
 
     //tu beda przynajmniej dwie metody - jedna ktora tworzy nowy github state kiedy jeszcze nie ma
     //a druga odpowiada za porownanie istniejacego i zapisanego w bazie github state z nowym (pobranym z api)
