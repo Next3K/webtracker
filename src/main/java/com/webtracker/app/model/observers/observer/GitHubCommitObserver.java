@@ -5,21 +5,26 @@ import com.webtracker.app.model.states.github.CodingLanguage;
 import com.webtracker.app.model.states.github.GitHubCommit;
 import com.webtracker.app.model.states.github.GitHubRepository;
 import com.webtracker.app.model.states.github.GitHubState;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.*;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Log
+@Entity
+@Getter
+@Setter
+@DiscriminatorValue("commit_observer")
+@RequiredArgsConstructor
+@Table(name = "github_commit_observer")
 public class GitHubCommitObserver extends Observer<GitHubState> {
-
-    private final Set<CodingLanguage> interestingLanguages;
-
-    public GitHubCommitObserver(Set<CodingLanguage> interestingLanguages) {
-        this.interestingLanguages = interestingLanguages;
-    }
 
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
@@ -58,7 +63,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
                 Event event = Event.builder()
                         .emailToSendEvent(newState.getObservatorEmail())
                         .eventTitle("New commit")
-                        .githubUsername(newState.getOwner().username())
+                        .githubUsername(newState.getOwner().getName())
                         .eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))
                         .build();
                 whatHappened.add(event);

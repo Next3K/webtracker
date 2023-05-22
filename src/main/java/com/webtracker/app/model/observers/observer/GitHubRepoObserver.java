@@ -4,9 +4,17 @@ import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.states.github.CodingLanguage;
 import com.webtracker.app.model.states.github.GitHubRepository;
 import com.webtracker.app.model.states.github.GitHubState;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,13 +23,13 @@ import java.util.stream.Collectors;
  * Observes changes in repositories, creates a list of events by comparing old and new states
  */
 @Log
+@Entity
+@Getter
+@Setter
+@DiscriminatorValue("repo_observer")
+@RequiredArgsConstructor
+@Table(name = "github_repo_observer")
 public class GitHubRepoObserver extends Observer<GitHubState> {
-
-    private final Set<CodingLanguage> interestingLanguages;
-
-    public GitHubRepoObserver(Set<CodingLanguage> interestingLanguages) {
-        this.interestingLanguages = interestingLanguages;
-    }
 
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
@@ -49,7 +57,7 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
                 Event event = Event.builder()
                         .emailToSendEvent(newState.getObservatorEmail())
                         .eventTitle("New Repository created")
-                        .githubUsername(newState.getOwner().username())
+                        .githubUsername(newState.getOwner().getName())
                         .eventDescription(String.format("Repository %s, written in %s, has been created", repo.getDescription(), repo.getCodingLanguages()))
                         .build();
                 whatHappened.add(event);
@@ -59,4 +67,6 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
         log.info("Nothing happened");
         return whatHappened;
     }
+
+
 }
