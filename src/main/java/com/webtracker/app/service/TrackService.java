@@ -1,7 +1,13 @@
 package com.webtracker.app.service;
 
+import com.webtracker.app.dto.track.TrackType;
 import com.webtracker.app.dto.track.TrackUserDto;
 import com.webtracker.app.model.events.GitHubApi;
+import com.webtracker.app.model.observers.observer.GitHubCommitObserver;
+import com.webtracker.app.model.observers.observer.GitHubRepoObserver;
+import com.webtracker.app.model.observers.observer.Observer;
+import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.repo.ObserverRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +16,25 @@ import org.springframework.stereotype.Service;
 public class TrackService {
 
     final GitHubApi gitHubApi;
+    final ObserverRepo observerRepo;
+
 
     void addToTrack(TrackUserDto trackUserDto) {
-        gitHubApi.callApi(trackUserDto);
+
+        GitHubState gitHubState = gitHubApi.callApi(trackUserDto.getGithubUsername(), trackUserDto.getEmail());
+
+        if (trackUserDto.getTrackType().equals(TrackType.REPOSITORY)) {
+            Observer<GitHubState> repoObserver = new GitHubRepoObserver();
+            repoObserver.setInterestingLanguages(trackUserDto.getTechnologies());
+            repoObserver.setOldState(gitHubState);
+            observerRepo.save(repoObserver);
+        } else {
+            Observer<GitHubState> repoObserver = new GitHubCommitObserver();
+            repoObserver.setInterestingLanguages(trackUserDto.getTechnologies());
+            repoObserver.setOldState(gitHubState);
+            observerRepo.save(repoObserver);
+        }
+
     }
 
 

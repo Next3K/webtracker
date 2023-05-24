@@ -29,40 +29,28 @@ import java.util.Objects;
 public class GitHubApi {
 
     final GitHubStateRepo gitHubStateRepo;
-    final ObserverRepo observerRepo;
 
     private final String USERNAME = "";
     private final String TOKEN = "";
 
-    public GitHubState callApi(TrackUserDto trackUserDto) {
+    public GitHubState callApi(String username, String mail) {
         List<GitHubRepository> repositoriesList = new ArrayList<>();
-        String repositoriesResponse = call("https://api.github.com/users/" + trackUserDto.getGithubUsername() + "/repos");
+        String repositoriesResponse = call("https://api.github.com/users/" + username + "/repos");
         JSONArray repositories = new JSONArray(repositoriesResponse);
         for (int i = 0; i < repositories.length(); i++) {
             JSONObject repo = repositories.getJSONObject(i);
             String repoName = repo.getString("name");
-            repositoriesList.add(getRepoInfo(trackUserDto.getGithubUsername(), repoName));
-            List<GitHubCommit> commits = this.getCommitsInfo(trackUserDto.getGithubUsername(), repoName);
+            repositoriesList.add(getRepoInfo(username, repoName));
+            List<GitHubCommit> commits = this.getCommitsInfo(username, repoName);
             repositoriesList.get(i).setCommits(commits);
 
         }
         GitHubState gitHubState = new GitHubState();
-        gitHubState.setObservatorEmail(trackUserDto.getEmail());
-        gitHubState.setOwner(new GitHubOwner(trackUserDto.getGithubUsername()));
-        gitHubState.setGitHubAccountDescription(getAccountDescription(trackUserDto.getGithubUsername()));
+        gitHubState.setObservatorEmail(mail);
+        gitHubState.setOwner(new GitHubOwner(username));
+        gitHubState.setGitHubAccountDescription(getAccountDescription(username));
         gitHubState.setRepositories(repositoriesList);
 
-        if (trackUserDto.getTrackType().equals(TrackType.REPOSITORY)) {
-            Observer<GitHubState> repoObserver = new GitHubRepoObserver();
-            repoObserver.setInterestingLanguages(trackUserDto.getTechnologies());
-            repoObserver.setOldState(gitHubState);
-            observerRepo.save(repoObserver);
-        } else {
-            Observer<GitHubState> repoObserver = new GitHubCommitObserver();
-            repoObserver.setInterestingLanguages(trackUserDto.getTechnologies());
-            repoObserver.setOldState(gitHubState);
-            observerRepo.save(repoObserver);
-        }
 
         gitHubStateRepo.save(gitHubState);
 
