@@ -19,7 +19,8 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
 
     private final Set<CodingLanguage> interestingLanguages;
 
-    public GitHubRepoObserver(Set<CodingLanguage> interestingLanguages) {
+    public GitHubRepoObserver(GitHubState initialState, Set<CodingLanguage> interestingLanguages) {
+        super(initialState);
         this.interestingLanguages = interestingLanguages;
     }
 

@@ -17,7 +17,8 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
     private final Set<CodingLanguage> interestingLanguages;
 
-    public GitHubCommitObserver(Set<CodingLanguage> interestingLanguages) {
+    public GitHubCommitObserver(GitHubState initial, Set<CodingLanguage> interestingLanguages) {
+        super(initial);
         this.interestingLanguages = interestingLanguages;
     }
 
