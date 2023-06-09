@@ -1,5 +1,6 @@
 package com.webtracker.app.model.observers.observer;
 
+import com.webtracker.app.model.Client;
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.states.github.CodingLanguage;
 import com.webtracker.app.model.states.github.GitHubCommit;
@@ -17,7 +18,8 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
     private final Set<CodingLanguage> interestingLanguages;
 
-    public GitHubCommitObserver(Set<CodingLanguage> interestingLanguages) {
+    public GitHubCommitObserver(Client client, GitHubState initial, Set<CodingLanguage> interestingLanguages) {
+        super(initial, client);
         this.interestingLanguages = interestingLanguages;
     }
 
@@ -56,7 +58,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
             for (GitHubCommit commit : filteredCommits) {
                 Event event = Event.builder()
-                        .emailToSendEvent(newState.getObservatorEmail())
+                        .emailToSendEvent(client.getClientMail())
                         .eventTitle("New commit")
                         .githubUsername(newState.getOwner().username())
                         .eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))

@@ -24,9 +24,7 @@ public class GitHubObserverManager extends ObserverManager<GitHubState, GitHubOb
     private static final Set<CodingLanguage> codingLanguages = new HashSet<>(Collections.singleton(CodingLanguage.Java));
 
     // what observers for each action
-    private static final Map<GitHubConsideredActions, List<Observer<GitHubState>>> map =
-            Map.of(GitHubConsideredActions.REPOSITORY_CHANGE, List.of(new GitHubRepoObserver(codingLanguages)),
-                    GitHubConsideredActions.COMMIT_CHANGE, List.of(new GitHubCommitObserver(codingLanguages)));
+    private static final Map<GitHubConsideredActions, List<Observer<GitHubState>>> map = null;
 
 
     public GitHubObserverManager() {
