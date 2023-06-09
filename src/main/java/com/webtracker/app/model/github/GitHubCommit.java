@@ -1,4 +1,4 @@
-package com.webtracker.app.model.states.github;
+package com.webtracker.app.model.github;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

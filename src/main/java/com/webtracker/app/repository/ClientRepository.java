@@ -11,8 +11,8 @@ public class ClientRepository {
 
     static {
         repository.addAll(List.of(
-                new Client(1, "myclient@gmail.com"),
-                new Client(2, "myclient@gmail.com")));
+                new Client(1, "Jack", "myclient@gmail.com"),
+                new Client(2, "Bob", "myclient@gmail.com")));
     }
 
     public static List<Client> getAll() {

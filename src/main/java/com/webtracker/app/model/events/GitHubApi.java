@@ -1,6 +1,6 @@
 package com.webtracker.app.model.events;
 
-import com.webtracker.app.model.states.github.*;
+import com.webtracker.app.model.github.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,7 +21,7 @@ public class GitHubApi {
     private static final String TOKEN = "";
     public static GitHubState callApi(GitHubOwner owner){
         List<GitHubRepository> repositoriesList = new ArrayList<>();
-        String username = owner.username();
+        String username = owner.getUsername();
         String repositoriesResponse = call("https://api.github.com/users/"+username+"/repos");
         JSONArray repositories = new JSONArray(repositoriesResponse);
         for (int i = 0; i < repositories.length(); i++) {

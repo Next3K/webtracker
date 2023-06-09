@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Client {
     private int clientId;
+    private String name;
     private String clientMail;
 }
