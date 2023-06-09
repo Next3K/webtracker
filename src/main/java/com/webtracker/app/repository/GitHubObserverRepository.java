@@ -19,4 +19,8 @@ public class GitHubObserverRepository  {
         // TODO get observers from database
         return List.of(firstObserver, secondObserver);
     }
+
+    public static void addALl(List<GitHubRepoObserver> observerList) {
+        // TODO implement
+    }
 }
