@@ -1,5 +1,6 @@
 package com.webtracker.app.model.observers.observer;
 
+import com.webtracker.app.model.Client;
 import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.states.github.CodingLanguage;
 import com.webtracker.app.model.states.github.GitHubRepository;
@@ -19,8 +20,8 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
 
     private final Set<CodingLanguage> interestingLanguages;
 
-    public GitHubRepoObserver(GitHubState initialState, Set<CodingLanguage> interestingLanguages) {
-        super(initialState);
+    public GitHubRepoObserver(Client client, GitHubState initialState, Set<CodingLanguage> interestingLanguages) {
+        super(initialState, client);
         this.interestingLanguages = interestingLanguages;
     }
 
@@ -48,7 +49,7 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
 
             for (GitHubRepository repo : filteredRepositories) {
                 Event event = Event.builder()
-                        .emailToSendEvent(newState.getObservatorEmail())
+                        .emailToSendEvent(client.getClientMail())
                         .eventTitle("New Repository created")
                         .githubUsername(newState.getOwner().username())
                         .eventDescription(String.format("Repository %s, written in %s, has been created", repo.getDescription(), repo.getCodingLanguages()))

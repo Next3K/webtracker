@@ -30,7 +30,6 @@ public class GitHubApi {
             repositoriesList.add(getRepoInfo(username,repoName));
         }
         GitHubState gitHubState = new GitHubState();
-        gitHubState.setObservatorEmail(null);
         gitHubState.setOwner(owner);
         gitHubState.setGitHubAccountDescription(getAccountDescription(username));
         gitHubState.setRepositories(repositoriesList);
