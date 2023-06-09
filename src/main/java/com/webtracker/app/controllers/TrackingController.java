@@ -37,6 +37,7 @@ public class TrackingController {
         if (byUsername == null) {
             byUsername = new GitHubOwner();
             byUsername.setUsername(trackUserDto.getGithubUsername());
+            GitHubOwnerRepository.addALl(List.of(byUsername));
         }
 
         // get initial state
