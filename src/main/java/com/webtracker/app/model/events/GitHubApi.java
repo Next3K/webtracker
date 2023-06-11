@@ -75,8 +75,8 @@ public class GitHubApi {
 
             String individualCommitResponse = call(api_commit_url);
             JSONObject individualCommitObject = new JSONObject(individualCommitResponse);
-            int addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
-            int deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
+            Integer addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
+            Integer deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
 
             GitHubCommit gitHubCommit = new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
             commitsList.add(gitHubCommit);

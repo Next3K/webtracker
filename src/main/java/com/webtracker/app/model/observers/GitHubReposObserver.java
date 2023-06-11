@@ -5,6 +5,12 @@ import com.webtracker.app.model.events.Event;
 import com.webtracker.app.model.github.CodingLanguage;
 import com.webtracker.app.model.github.GitHubRepository;
 import com.webtracker.app.model.github.GitHubState;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -16,13 +22,16 @@ import java.util.stream.Collectors;
  * Observes changes in repositories, creates a list of events by comparing old and new states
  */
 @Log
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@DiscriminatorValue("repo_observer")
+@Table(name = "github_repo_observer")
 public class GitHubReposObserver extends Observer<GitHubState> {
 
-    private final Set<CodingLanguage> interestingLanguages;
-
-    public GitHubReposObserver(Client client, GitHubState initialState, Set<CodingLanguage> interestingLanguages) {
-        super(initialState, client);
-        this.interestingLanguages = interestingLanguages;
+    public GitHubReposObserver(Set<CodingLanguage> interestingLanguages, GitHubState oldState, Client client) {
+        super(interestingLanguages, oldState, client);
     }
 
     @Override

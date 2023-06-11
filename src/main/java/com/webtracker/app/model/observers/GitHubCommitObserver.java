@@ -6,6 +6,12 @@ import com.webtracker.app.model.github.CodingLanguage;
 import com.webtracker.app.model.github.GitHubCommit;
 import com.webtracker.app.model.github.GitHubRepository;
 import com.webtracker.app.model.github.GitHubState;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -14,13 +20,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Log
+@Entity
+@Getter
+@Setter
+@DiscriminatorValue("commit_observer")
+@RequiredArgsConstructor
+@Table(name = "github_commit_observer")
 public class GitHubCommitObserver extends Observer<GitHubState> {
 
-    private final Set<CodingLanguage> interestingLanguages;
-
-    public GitHubCommitObserver(Client client, GitHubState initial, Set<CodingLanguage> interestingLanguages) {
-        super(initial, client);
-        this.interestingLanguages = interestingLanguages;
+    public GitHubCommitObserver(Set<CodingLanguage> interestingLanguages, GitHubState oldState, Client client) {
+        super(interestingLanguages, oldState, client);
     }
 
     @Override
@@ -52,7 +61,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
             List<GitHubCommit> filteredCommits = new ArrayList<>();
 
-            for (GitHubRepository repo: filteredRepositories) {
+            for (GitHubRepository repo : filteredRepositories) {
                 filteredCommits.add((GitHubCommit) repo.getCommits());
             }
 
