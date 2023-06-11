@@ -24,7 +24,7 @@ public class TrackUserDto {
     @NotNull
     private Set<CodingLanguage> technologies;
 
-    @NotBlank
-    private Client client;
+    @NotNull
+    private ClientDto client;
 
 }
