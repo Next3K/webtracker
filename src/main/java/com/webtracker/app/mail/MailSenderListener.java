@@ -1,7 +1,6 @@
 package com.webtracker.app.mail;
 
 import com.webtracker.app.model.events.Event;
-import com.webtracker.app.service.EmailSenderServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

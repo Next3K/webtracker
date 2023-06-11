@@ -1,4 +1,4 @@
-package com.webtracker.app.service;
+package com.webtracker.app.mail;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

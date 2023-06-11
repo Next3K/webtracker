@@ -1,4 +1,4 @@
-package com.webtracker.app.model.observers.observer;
+package com.webtracker.app.model.observers;
 
 import com.webtracker.app.model.Client;
 import com.webtracker.app.model.events.Event;

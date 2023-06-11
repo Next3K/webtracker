@@ -1,6 +1,6 @@
 package com.webtracker.app.model.events;
 
-import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.model.github.GitHubState;
 
 import java.util.ArrayList;
 import java.util.List;

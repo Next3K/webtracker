@@ -12,14 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
-
     String emailToSendEvent;
-
     String githubUsername;
-
     String eventTitle;
-
     String eventDescription;
-
     String link;
 }

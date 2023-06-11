@@ -1,11 +1,9 @@
 package com.webtracker.app.scheduling;
 
 import com.webtracker.app.model.events.Event;
-import com.webtracker.app.model.events.GitHubApi;
-import com.webtracker.app.model.observers.observer.GitHubRepoObserver;
-import com.webtracker.app.model.observers.observer.Observer;
-import com.webtracker.app.model.states.github.GitHubOwner;
-import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.model.observers.GitHubReposObserver;
+import com.webtracker.app.model.observers.Observer;
+import com.webtracker.app.model.github.GitHubState;
 import com.webtracker.app.repository.EventRepository;
 import com.webtracker.app.repository.GitHubObserverRepository;
 import org.slf4j.Logger;
@@ -29,10 +27,10 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 60_000) // check stats every 1 minute
     public void detectEvents() {
         log.info("Started updating observers");
-        List<GitHubRepoObserver> observerList = GitHubObserverRepository.getAll();
+        List<GitHubReposObserver> observerList = GitHubObserverRepository.getAll();
 
         // which repos to which observers
-        Map<GitHubState, List<GitHubRepoObserver>> collect =
+        Map<GitHubState, List<GitHubReposObserver>> collect =
                 observerList.stream().collect(Collectors.groupingBy(Observer::getOldState));
 
         Map<GitHubState, GitHubState> oldNewStatesMapping = new HashMap<>();

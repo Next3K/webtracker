@@ -1,11 +1,11 @@
-package com.webtracker.app.model.observers.observer;
+package com.webtracker.app.model.observers;
 
 import com.webtracker.app.model.Client;
 import com.webtracker.app.model.events.Event;
-import com.webtracker.app.model.states.github.CodingLanguage;
-import com.webtracker.app.model.states.github.GitHubCommit;
-import com.webtracker.app.model.states.github.GitHubRepository;
-import com.webtracker.app.model.states.github.GitHubState;
+import com.webtracker.app.model.github.CodingLanguage;
+import com.webtracker.app.model.github.GitHubCommit;
+import com.webtracker.app.model.github.GitHubRepository;
+import com.webtracker.app.model.github.GitHubState;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
                 Event event = Event.builder()
                         .emailToSendEvent(client.getClientMail())
                         .eventTitle("New commit")
-                        .githubUsername(newState.getOwner().username())
+                        .githubUsername(newState.getOwner().getUsername())
                         .eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))
                         .build();
                 whatHappened.add(event);

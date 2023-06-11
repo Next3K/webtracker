@@ -1,4 +1,4 @@
-package com.webtracker.app.dto.track;
+package com.webtracker.app.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,15 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrackUserDto {
+public class DeleteUserDto {
 
     @NotBlank
     private String githubUsername;
 
-    @NotNull
-    private List<String> technologies;
-
-    @NotBlank
-    private String email;
 
 }
