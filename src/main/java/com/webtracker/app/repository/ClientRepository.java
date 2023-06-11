@@ -1,25 +1,13 @@
 package com.webtracker.app.repository;
 
 import com.webtracker.app.model.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
+public interface ClientRepository extends JpaRepository<Client, Long> {
 
-public class ClientRepository {
-
-    private static final List<Client> repository = new ArrayList<>();
-
-    static {
-        repository.addAll(List.of(
-                new Client(1, "Jack", "myclient@gmail.com"),
-                new Client(2, "Bob", "myclient@gmail.com")));
-    }
-
-    public static List<Client> getAll() {
-        return new ArrayList<>(repository);
-    }
-
-    public static void addALl(List<Client> observerList) {
-        repository.addAll(observerList);
-    }
 }
