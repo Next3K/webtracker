@@ -8,6 +8,7 @@ import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,11 +24,18 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
         this.interestingLanguages = interestingLanguages;
     }
 
+    public void setOldState(GitHubState oldState) {
+        this.oldState = oldState;
+    }
+
     @Override
-    protected List<Event> detectEvents(GitHubState newState) {
+    public List<Event> detectEvents(GitHubState newState) {
         // check what has changed
-        List<GitHubRepository> newRepositories = newState.getRepositories();
-        List<GitHubRepository> oldRepositories = this.oldState.getRepositories();
+        List<GitHubRepository> newStateRepositories = newState.getRepositories();
+        List<GitHubRepository> oldRepositories = new ArrayList<>();
+        if (this.oldState != null) {
+            oldRepositories = this.oldState.getRepositories();
+        }
 
         // create events list based on the changes
         List<Event> whatHappened = new ArrayList<>();
@@ -36,7 +44,7 @@ public class GitHubRepoObserver extends Observer<GitHubState> {
                 .map(GitHubRepository::getRepositoryID)
                 .collect(Collectors.toSet());
 
-        newRepositories = newRepositories.stream().filter(gitHubRepository -> !oldRepositoryIds.contains(gitHubRepository.getRepositoryID())).toList();
+        List<GitHubRepository> newRepositories = newStateRepositories.stream().filter(gitHubRepository -> !oldRepositoryIds.contains(gitHubRepository.getRepositoryID())).toList();
 
         if (!newRepositories.isEmpty()) {
             log.info("Changes in repository list detected");

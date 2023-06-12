@@ -19,7 +19,7 @@ public abstract class Observer<T> {
     }
 
     public List<Event> popCollectedEvents() {
-        ArrayList<Event> tmp = new ArrayList<>(collectedEvents);
+        List<Event> tmp = new ArrayList<>(collectedEvents);
         collectedEvents.clear();
         return tmp;
     }
