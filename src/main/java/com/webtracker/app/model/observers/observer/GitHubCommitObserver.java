@@ -53,11 +53,11 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
             List<GitHubCommit> filteredCommits = new ArrayList<>();
 
             for (GitHubRepository repo: filteredRepositories) {
-                repo.getCommits().forEach(commit -> {
-                    if (newCommits.contains(commit)) {
+                repo.getCommits().forEach(commit -> newCommits.forEach(newCommit -> {
+                    if (newCommit.getCommitSha().equals(commit.getCommitSha())) {
                         filteredCommits.add(commit);
                     }
-                });
+                }));
             }
 
             for (GitHubCommit commit : filteredCommits) {
