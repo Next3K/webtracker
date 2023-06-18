@@ -2,10 +2,7 @@ package com.webtracker.app.model.github;
 
 import com.webtracker.app.common.AbstractEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,9 +12,11 @@ import java.util.List;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "github_state")
 @Getter
 @Setter
 @Entity
+@ToString
 public class GitHubState extends AbstractEntity {
 
     @Id
@@ -31,7 +30,8 @@ public class GitHubState extends AbstractEntity {
     @JoinColumn(name = "github_owner_id", nullable = false)
     private GitHubOwner owner;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "github_state_id", referencedColumnName = "id")
     private List<GitHubRepository> repositories;
 
 }

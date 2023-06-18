@@ -55,22 +55,24 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
         if (!newCommits.isEmpty()) {
             log.info("New commits detected");
 
-            List<GitHubRepository> filteredRepositories = newState.getRepositories().stream()
-                    .filter(repo -> repo.getCodingLanguages().stream().anyMatch(interestingLanguages::contains))
-                    .toList();
+            List<GitHubRepository> filteredRepositories = newState.getRepositories().stream().filter(repo -> repo.getCodingLanguages().stream().anyMatch(interestingLanguages::contains)).toList();
 
             List<GitHubCommit> filteredCommits = new ArrayList<>();
 
             for (GitHubRepository repo : filteredRepositories) {
-                filteredCommits.add((GitHubCommit) repo.getCommits());
+                List<GitHubCommit> finalNewCommits = newCommits;
+                repo.getCommits().forEach(commit -> finalNewCommits.forEach(newCommit -> {
+                    if (newCommit.getCommitSha().equals(commit.getCommitSha())) {
+                        filteredCommits.add(commit);
+                    }
+                }));
             }
 
             for (GitHubCommit commit : filteredCommits) {
                 Event event = Event.builder()
-                        .emailToSendEvent(client.getClientMail())
-                        .eventTitle("New commit")
-                        .githubUsername(newState.getOwner().getUsername())
-                        .eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))
+                        .emailToSendEvent(client.getClientMail()).eventTitle("New commit")
+                        .githubUsername(newState.getOwner().getUsername()).eventDescription(String.format("Commit %s has been pushed", commit.getCommitMessage()))
+                        .link(commit.getUrl())
                         .build();
                 whatHappened.add(event);
             }

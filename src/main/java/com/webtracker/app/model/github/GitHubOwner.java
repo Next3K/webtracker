@@ -11,6 +11,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "github_owner")
 @Getter
 @Setter
 @Entity

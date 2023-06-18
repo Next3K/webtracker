@@ -4,16 +4,16 @@ import com.webtracker.app.common.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "github_commit")
 @Entity
+@ToString
+@EqualsAndHashCode
 public class GitHubCommit extends AbstractEntity {
 
     @Id

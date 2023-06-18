@@ -5,10 +5,7 @@ import com.webtracker.app.common.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -18,16 +15,18 @@ import java.util.List;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "github_repository")
 @Getter
 @Setter
 @Entity
+@ToString
 public class GitHubRepository extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "repository_id", referencedColumnName = "id")
     private List<GitHubCommit> commits;
 

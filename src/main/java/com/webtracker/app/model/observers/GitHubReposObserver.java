@@ -34,6 +34,7 @@ public class GitHubReposObserver extends Observer<GitHubState> {
         super(interestingLanguages, oldState, client);
     }
 
+
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
         // check what has changed
