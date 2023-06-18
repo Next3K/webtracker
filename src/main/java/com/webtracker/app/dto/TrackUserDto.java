@@ -2,6 +2,7 @@ package com.webtracker.app.dto;
 
 import com.webtracker.app.model.Client;
 import com.webtracker.app.model.github.CodingLanguage;
+import com.webtracker.app.model.observers.ObserverType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -26,5 +27,8 @@ public class TrackUserDto {
 
     @NotNull
     private ClientDto client;
+
+    @NotNull
+    private ObserverType observerType;
 
 }
