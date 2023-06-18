@@ -10,13 +10,4 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-//    public static void addAll(List<Event> events) {
-//        // TODO add events to DB
-//    }
-//
-//    public static List<Event> popAll() {
-//        // TODO get all events from DB
-//        return new ArrayList<>();
-//    }
-
 }
