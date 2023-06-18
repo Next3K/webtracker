@@ -24,14 +24,16 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
     @Override
     protected List<Event> detectEvents(GitHubState newState) {
         // check what has changed
-        List<GitHubCommit> newCommits = new ArrayList<>();
+        List<GitHubCommit> newStateCommits = new ArrayList<>();
         for (GitHubRepository repo : newState.getRepositories()) {
-            newCommits.addAll(repo.getCommits());
+            newStateCommits.addAll(repo.getCommits());
         }
 
         List<GitHubCommit> oldCommits = new ArrayList<>();
-        for (GitHubRepository repo : this.oldState.getRepositories()) {
-            oldCommits.addAll(repo.getCommits());
+        if (this.oldState != null) {
+            for (GitHubRepository repo : this.oldState.getRepositories()) {
+                oldCommits.addAll(repo.getCommits());
+            }
         }
 
         // create events based on the changes
@@ -39,7 +41,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
         Set<String> oldCommitsIds = oldCommits.stream().map(GitHubCommit::getCommitSha).collect(Collectors.toSet());
 
-        newCommits = newCommits.stream().filter(gitHubCommit -> !oldCommitsIds.contains(gitHubCommit.getCommitSha())).toList();
+        List<GitHubCommit> newCommits = newStateCommits.stream().filter(gitHubCommit -> !oldCommitsIds.contains(gitHubCommit.getCommitSha())).toList();
 
         if (!newCommits.isEmpty()) {
             log.info("New commits detected");
@@ -51,7 +53,11 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
             List<GitHubCommit> filteredCommits = new ArrayList<>();
 
             for (GitHubRepository repo: filteredRepositories) {
-                filteredCommits.add((GitHubCommit) repo.getCommits());
+                repo.getCommits().forEach(commit -> {
+                    if (newCommits.contains(commit)) {
+                        filteredCommits.add(commit);
+                    }
+                });
             }
 
             for (GitHubCommit commit : filteredCommits) {
