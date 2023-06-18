@@ -33,18 +33,20 @@ public abstract class Observer<T> extends AbstractEntity {
     @Setter(lombok.AccessLevel.NONE)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     protected Set<CodingLanguage> interestingLanguages = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "old_state_id")
     protected T oldState;
 
-    @OneToMany(
+    @OneToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE},
             orphanRemoval = true)
+    @JoinColumn(name = "observer_id")
     protected List<Event> collectedEvents = new ArrayList<>();
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
     protected Client client; // for whom this observer "works"
 
     protected abstract List<Event> detectEvents(T newState);
