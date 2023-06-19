@@ -32,8 +32,12 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
         super(interestingLanguages, oldState, client);
     }
 
+    public void setOldState(GitHubState oldState) {
+        this.oldState = oldState;
+    }
+
     @Override
-    protected List<Event> detectEvents(GitHubState newState) {
+    public List<Event> detectEvents(GitHubState newState) {
         // check what has changed
         List<GitHubCommit> newStateCommits = new ArrayList<>();
         for (GitHubRepository repo : newState.getRepositories()) {
