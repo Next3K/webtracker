@@ -12,7 +12,7 @@ import com.webtracker.app.repository.GitHubCommitObserverRepository;
 import com.webtracker.app.repository.GitHubOwnerRepository;
 import com.webtracker.app.repository.GitHubRepoObserverRepository;
 import com.webtracker.app.repository.GithubStateRepository;
-import com.webtracker.app.service.GitHubApi;
+import com.webtracker.app.model.events.GitHubApi;
 import com.webtracker.app.exceptions.WrongObserverTypeException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
