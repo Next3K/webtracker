@@ -42,9 +42,13 @@ To install and run the application, follow these steps:
 
 1.  Clone the repository: `git clone https://github.com/Next3K/webtracker`
 2.  Navigate to the project directory: `cd webtracker`
-3.  Set up the database by running the database setup script.
+3.  Set up the database by running the database setup script (_docker-compose.yml_).
 4.  Open the project in your favorite IDE (such as IntelliJ or Eclipse).
-5.  Configure the database connection settings in the `application.properties` file.
+5.  Specify the following configuration options before running:
+- -Dspring.mail.username=MAIL: Specify the email address to be used as the sender's username for the email service.
+- -Dspring.mail.password=MAIL_PASSWORD: Provide the password for the email account used as the sender's credentials.
+- -Dspring.mail.host=HOST_EMAIL: Set the host address for the email service provider.
+- -Dspring.mail.port=PORT: Specify the port number to be used for the email service.
 6.  Build the project using Maven.
 7.  Run the application.
 
