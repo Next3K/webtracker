@@ -1,6 +1,7 @@
 package com.webtracker.app.model.events;
 
 import com.webtracker.app.model.github.*;
+import lombok.extern.java.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +16,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
+
 public class GitHubApi {
+
+    private GitHubApi() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static final String USERNAME = "";
     private static final String TOKEN = "";
@@ -75,8 +81,8 @@ public class GitHubApi {
 
             String individualCommitResponse = call(api_commit_url);
             JSONObject individualCommitObject = new JSONObject(individualCommitResponse);
-            int addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
-            int deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
+            Integer addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
+            Integer deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
 
             GitHubCommit gitHubCommit = new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
             commitsList.add(gitHubCommit);
@@ -95,8 +101,11 @@ public class GitHubApi {
         for (String lang : languages) {
             switch (lang){
                 case "C++": lang = "Cpp";
+                break;
                 case "C#": lang = "Csharp";
+                break;
                 case "Objective-C": lang = "Objective_C";
+                break;
             }
             try {
                 CodingLanguage enumValue = CodingLanguage.valueOf(lang);
