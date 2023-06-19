@@ -29,6 +29,6 @@ public class TrackUserDto {
     private ClientDto client;
 
     @NotNull
-    private ObserverType observerType;
+    private String observerType;
 
 }
