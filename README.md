@@ -9,6 +9,9 @@ This version of the app represents an MVP (minimal viable product). Currently, o
 Also, only one type of online resource can be tracked, namely GitHub.     
 It provides a user-friendly interface where users can enter the URLs of the websites they want to monitor, and the application will notify them whenever any changes occur on those websites.
 
+![image](https://github.com/Next3K/webtracker/assets/52383281/e26af43c-3b24-4cc9-928d-e2b6c78ffa68)
+
+
 Implemented Features
 --------
 
@@ -33,7 +36,6 @@ The application is built using the following technologies:
 -   Backend: Java with Spring Boot framework, Maven, Hibernate
 -   Frontend: not implemented
 -   Database: PostgreSQL
--   Observer Pattern: Used to track changes on websites
 
 Installation
 ------------
