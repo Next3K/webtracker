@@ -36,7 +36,11 @@ public abstract class Observer<T> extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     protected Set<CodingLanguage> interestingLanguages = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REMOVE,
+            CascadeType.MERGE
+    })
     @JoinColumn(name = "old_state_id")
     protected T oldState;
 

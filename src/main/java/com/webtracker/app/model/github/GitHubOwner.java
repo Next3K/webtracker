@@ -4,15 +4,13 @@ import com.webtracker.app.common.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "github_owner")
 @Getter
+@ToString
 @Setter
 @Entity
 public class GitHubOwner extends AbstractEntity {

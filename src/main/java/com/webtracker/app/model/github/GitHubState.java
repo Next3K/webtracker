@@ -1,6 +1,7 @@
 package com.webtracker.app.model.github;
 
 import com.webtracker.app.common.AbstractEntity;
+import com.webtracker.app.model.observers.Observer;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +31,15 @@ public class GitHubState extends AbstractEntity {
     @JoinColumn(name = "github_owner_id", nullable = false)
     private GitHubOwner owner;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval = true, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REMOVE,
+            CascadeType.MERGE
+    }, fetch = FetchType.EAGER)
     @JoinColumn(name = "github_state_id", referencedColumnName = "id")
     private List<GitHubRepository> repositories;
+
+    @OneToOne(mappedBy = "oldState", cascade = CascadeType.ALL)
+    private Observer observer;
 
 }
