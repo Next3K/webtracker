@@ -2,7 +2,7 @@ package com.webtracker.app.scheduling;
 
 import com.webtracker.app.mail.EmailSenderServiceImpl;
 import com.webtracker.app.model.events.Event;
-import com.webtracker.app.model.events.GitHubApi;
+import com.webtracker.app.service.GitHubApi;
 import com.webtracker.app.model.github.GitHubState;
 import com.webtracker.app.model.observers.GitHubCommitObserver;
 import com.webtracker.app.model.observers.GitHubReposObserver;
