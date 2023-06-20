@@ -54,6 +54,9 @@ public class GitHubApi {
        return call("https://api.github.com/repos/"+username+"/"+repoName+"/languages");
     }
 
+    public static String getStats(String url){
+       return call(url);
+    }
     public static GitHubState callApi(GitHubOwner owner){
         List<GitHubRepository> repositoriesList = new ArrayList<>();
         String username = owner.getUsername();
@@ -90,6 +93,7 @@ public class GitHubApi {
     public static List<GitHubCommit> getCommitsInfo(String username, String repoName){
         List<GitHubCommit> commitsList = new ArrayList<>();
         String commitResponse = getCommitList(username,repoName);
+        System.out.println("sdadsaadsa");
         JSONArray commits = new JSONArray(commitResponse);
         for (int i = 0; i < commits.length(); i++) {
             JSONObject commitObject = commits.getJSONObject(i);
@@ -106,7 +110,7 @@ public class GitHubApi {
             String html_commmit_url = commitObject.getString("html_url");
             String api_commit_url = commitObject.getString("url");
 
-            String individualCommitResponse = call(api_commit_url);
+            String individualCommitResponse = getStats(api_commit_url);
             JSONObject individualCommitObject = new JSONObject(individualCommitResponse);
             Integer addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
             Integer deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
