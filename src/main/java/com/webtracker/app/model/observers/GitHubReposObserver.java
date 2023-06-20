@@ -15,7 +15,6 @@ import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,10 +34,7 @@ public class GitHubReposObserver extends Observer<GitHubState> {
         super(interestingLanguages, oldState, client);
     }
 
-    public void setOldState(GitHubState oldState) {
-        this.oldState = oldState;
-    }
-
+    @Override
     public void setOldState(GitHubState oldState) {
         this.oldState = oldState;
     }
