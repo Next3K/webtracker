@@ -1,20 +1,18 @@
 package com.webtracker.observers;
 
-import com.webtracker.app.AppApplication;
+import com.webtracker.app.model.Client;
 import com.webtracker.app.model.events.Event;
-import com.webtracker.app.model.observers.observer.GitHubCommitObserver;
-import com.webtracker.app.model.states.github.*;
+import com.webtracker.app.model.github.*;
+import com.webtracker.app.model.observers.GitHubCommitObserver;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = AppApplication.class)
 class GitHubCommitObserverTest {
 
     //Static method to provide ready arguments for testing purposes
@@ -61,29 +59,31 @@ class GitHubCommitObserverTest {
             i++;
         }
 
+        Client client = new Client("a", "b");
+
         return Stream.of(
-                Arguments.of(interestingLanguages, githubRepo1, githubRepo2)
+                Arguments.of(interestingLanguages, client, githubRepo1, githubRepo2)
         );
     }
 
     //Test for detecting changes between different old state and new state
     @ParameterizedTest
     @MethodSource("generateTestData")
-    void commitObserverDetectChanges(Set<CodingLanguage> interestingLanguages, GitHubRepository githubrepo1, GitHubRepository githubrepo2) {
+    void commitObserverDetectChanges(Set<CodingLanguage> interestingLanguages, Client client, GitHubRepository githubrepo1, GitHubRepository githubrepo2) {
 
         GitHubState oldState = new GitHubState();
         GitHubState newState = new GitHubState();
 
-        GitHubCommitObserver gitHubCommitObserver = new GitHubCommitObserver(interestingLanguages);
-
-        oldState.setGitHubAccountDescription("blah");
-        oldState.setOwner(new GitHubOwner("a", "b", "exampleusername", "examplewow09876@gmail.com"));
-        oldState.setObservatorEmail("examplewow09876@gmail.com");
+        oldState.setGitHubAccountDescription("GitHub account description example");
+        oldState.setOwner(new GitHubOwner(12345L, "a", "b", "exampleusername", "example@gmail.com"));
         List<GitHubRepository> oldRepositories = new ArrayList<>();
 
         oldRepositories.add(githubrepo1);
 
         oldState.setRepositories(oldRepositories);
+
+        GitHubCommitObserver gitHubCommitObserver = new GitHubCommitObserver(interestingLanguages, oldState, client);
+
         gitHubCommitObserver.setOldState(oldState);
 
         List<GitHubRepository> newRepositories = new ArrayList<>();
@@ -91,9 +91,8 @@ class GitHubCommitObserverTest {
         newRepositories.add(githubrepo1);
         newRepositories.add(githubrepo2);
 
-        newState.setGitHubAccountDescription("blah");
-        newState.setOwner(new GitHubOwner("a", "b", "exampleusername", "examplewow09876@gmail.com"));
-        newState.setObservatorEmail("examplewow09876@gmail.com");
+        newState.setGitHubAccountDescription("GitHub account description example");
+        newState.setOwner(new GitHubOwner(12345L, "a", "b", "exampleusername", "example@gmail.com"));
 
         newState.setRepositories(newRepositories);
 
@@ -104,30 +103,29 @@ class GitHubCommitObserverTest {
     //Test for detecting changes between different old state and new state
     @ParameterizedTest
     @MethodSource("generateTestData")
-    void commitObserverNoChangesDetected(Set<CodingLanguage> interestingLanguages, GitHubRepository githubrepo1) {
+    void commitObserverNoChangesDetected(Set<CodingLanguage> interestingLanguages, Client client, GitHubRepository githubrepo1) {
 
         GitHubState oldState = new GitHubState();
         GitHubState newState = new GitHubState();
 
-        GitHubCommitObserver gitHubCommitObserver = new GitHubCommitObserver(interestingLanguages);
-
-        oldState.setGitHubAccountDescription("blah");
-        oldState.setOwner(new GitHubOwner("a", "b", "exampleusername", "examplewow09876@gmail.com"));
-        oldState.setObservatorEmail("examplewow09876@gmail.com");
+        oldState.setGitHubAccountDescription("GitHub account description example");
+        oldState.setOwner(new GitHubOwner(12345L, "a", "b", "exampleusername", "example@gmail.com"));
         List<GitHubRepository> oldRepositories = new ArrayList<>();
 
         oldRepositories.add(githubrepo1);
 
         oldState.setRepositories(oldRepositories);
+
+        GitHubCommitObserver gitHubCommitObserver = new GitHubCommitObserver(interestingLanguages, oldState, client);
+
         gitHubCommitObserver.setOldState(oldState);
 
         List<GitHubRepository> newRepositories = new ArrayList<>();
 
         newRepositories.add(githubrepo1);
 
-        newState.setGitHubAccountDescription("blah");
-        newState.setOwner(new GitHubOwner("a", "b", "exampleusername", "examplewow09876@gmail.com"));
-        newState.setObservatorEmail("examplewow09876@gmail.com");
+        newState.setGitHubAccountDescription("GitHub account description example");
+        newState.setOwner(new GitHubOwner(12345L, "a", "b", "exampleusername", "example@gmail.com"));
 
         newState.setRepositories(newRepositories);
 
