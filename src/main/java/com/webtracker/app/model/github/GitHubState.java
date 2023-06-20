@@ -34,12 +34,10 @@ public class GitHubState extends AbstractEntity {
     @OneToMany(orphanRemoval = true, cascade = {
             CascadeType.PERSIST,
             CascadeType.REMOVE,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            CascadeType.REFRESH
     }, fetch = FetchType.EAGER)
     @JoinColumn(name = "github_state_id", referencedColumnName = "id")
     private List<GitHubRepository> repositories;
-
-    @OneToOne(mappedBy = "oldState", cascade = CascadeType.ALL)
-    private Observer observer;
 
 }

@@ -29,7 +29,8 @@ public class GitHubRepository extends AbstractEntity {
     @OneToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.REMOVE,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            CascadeType.REFRESH
     }, fetch = FetchType.EAGER)
     @JoinColumn(name = "repository_id", referencedColumnName = "id")
     private List<GitHubCommit> commits;
