@@ -50,4 +50,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public final ResponseEntity<Object> handleNotFoundException(NotFoundException ex,
+                                                                         WebRequest request) {
+        ApiException apiException =
+                new ApiException(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND,
+                        List.of(request.getDescription(false)), LocalDateTime.now());
+
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getHttpStatus());
+    }
+
 }

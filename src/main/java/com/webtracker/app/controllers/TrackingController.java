@@ -3,6 +3,7 @@ package com.webtracker.app.controllers;
 import com.webtracker.app.dto.DeleteUserDto;
 import com.webtracker.app.dto.TrackUserDto;
 import com.webtracker.app.dto.mapper.ClientMapper;
+import com.webtracker.app.exceptions.NotFoundException;
 import com.webtracker.app.model.github.GitHubOwner;
 import com.webtracker.app.model.github.GitHubState;
 import com.webtracker.app.model.observers.GitHubCommitObserver;
@@ -77,6 +78,12 @@ public class TrackingController {
 
         GitHubOwner byUsername = gitHubOwnerRepository.findByUsername(deleteUserDto.getGithubUsername());
         GitHubState stateToDelete = githubStateRepository.findByOwner(byUsername);
+
+        if (byUsername == null) {
+            throw new NotFoundException("User not found");
+        } else if (stateToDelete == null) {
+            throw new NotFoundException("State not found");
+        }
 
         if (deleteUserDto.getObserverType().equals(ObserverType.GitHubReposObserver.getName())) {
             gitHubRepoObserverRepository.deleteByOldState(stateToDelete);
