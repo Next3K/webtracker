@@ -31,10 +31,33 @@ public class GitHubApi {
     public void setTokenStatic(String token) {
         GitHubApi.TOKEN = token;
     }
+
+    public static String getUserRepos(String username){
+        return call("https://api.github.com/users/"+username+"/repos");
+    }
+
+    public static String getAccountDescription(String username) {
+        String userResponse = call("https://api.github.com/users/"+username);
+        JSONObject user = new JSONObject(userResponse);
+        return user.getString("bio");
+    }
+
+    public static String getCommitList(String username, String repoName){
+       return call("https://api.github.com/repos/"+username+"/"+repoName+"/commits");
+    }
+
+    public static String getRepo(String username, String repoName){
+        return call("https://api.github.com/repos/"+username+"/"+repoName);
+    }
+
+    public static String getLangs(String username, String repoName){
+       return call("https://api.github.com/repos/"+username+"/"+repoName+"/languages");
+    }
+
     public static GitHubState callApi(GitHubOwner owner){
         List<GitHubRepository> repositoriesList = new ArrayList<>();
         String username = owner.getUsername();
-        String repositoriesResponse = call("https://api.github.com/users/"+username+"/repos");
+        String repositoriesResponse = getUserRepos(username);
         JSONArray repositories = new JSONArray(repositoriesResponse);
         for (int i = 0; i < repositories.length(); i++) {
             JSONObject repo = repositories.getJSONObject(i);
@@ -47,11 +70,9 @@ public class GitHubApi {
         gitHubState.setRepositories(repositoriesList);
         return gitHubState;
     }
-    public static String getAccountDescription(String username) {
-        String userResponse = call("https://api.github.com/users/"+username);
-        JSONObject user = new JSONObject(userResponse);
-        return user.getString("bio");
-    }
+
+
+
     public static String call(String url){
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
                 .header("Authorization", "Basic " + encodeCredentials(USERNAME, TOKEN))
@@ -68,7 +89,7 @@ public class GitHubApi {
 
     public static List<GitHubCommit> getCommitsInfo(String username, String repoName){
         List<GitHubCommit> commitsList = new ArrayList<>();
-        String commitResponse = call("https://api.github.com/repos/"+username+"/"+repoName+"/commits");
+        String commitResponse = getCommitList(username,repoName);
         JSONArray commits = new JSONArray(commitResponse);
         for (int i = 0; i < commits.length(); i++) {
             JSONObject commitObject = commits.getJSONObject(i);
@@ -98,9 +119,9 @@ public class GitHubApi {
 
     public static GitHubRepository getRepoInfo(String username, String repoName){
         GitHubRepository gitHubRepository = new GitHubRepository();
-        String repositoryResponse = call("https://api.github.com/repos/"+username+"/"+repoName);
+        String repositoryResponse = getRepo(username,repoName);
         JSONObject repositoryObject = new JSONObject(repositoryResponse);
-        String languagesResponse = call("https://api.github.com/repos/"+username+"/"+repoName+"/languages");
+        String languagesResponse = getLangs(username,repoName);
         JSONObject languagesObject = new JSONObject(languagesResponse);
         List<String> languages = new ArrayList<>(languagesObject.keySet());
         List<CodingLanguage> enumLanguages = new ArrayList<>();
