@@ -39,7 +39,8 @@ public abstract class Observer<T> extends AbstractEntity {
     @OneToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.REMOVE,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            CascadeType.REFRESH
     })
     @JoinColumn(name = "old_state_id")
     protected T oldState;

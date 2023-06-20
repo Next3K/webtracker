@@ -1,4 +1,4 @@
-package com.webtracker.app.model.events;
+package com.webtracker.app.service;
 
 import com.webtracker.app.model.github.*;
 import lombok.extern.java.Log;
