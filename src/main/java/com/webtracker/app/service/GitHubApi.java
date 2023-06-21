@@ -40,6 +40,7 @@ public class GitHubApi {
     public static String getAccountDescription(String username) {
         String userResponse = call("https://api.github.com/users/"+username);
         JSONObject user = new JSONObject(userResponse);
+        if(user.isNull("bio")) return "";
         return user.getString("bio");
     }
 
@@ -72,7 +73,6 @@ public class GitHubApi {
         gitHubState.setOwner(owner);
         gitHubState.setGitHubAccountDescription(getAccountDescription(username));
         gitHubState.setRepositories(repositoriesList);
-        System.out.println(gitHubState);
         return gitHubState;
     }
 
