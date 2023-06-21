@@ -44,6 +44,17 @@ public class ApiTest {
         Assert.assertEquals((Integer)0,commit.getAddedLines());
         Assert.assertEquals((Integer)1,commit.getDeletedLines());
     }
-
+    @Test
+    public void checkGitHubRepositoryFromObjectMethod(){
+        List<GitHubCommit> commits = new ArrayList<>();
+        commits.add(GitHubApi.makeCommitFromObjects(testJSON,statsJSON));
+        List<CodingLanguage> langs = new ArrayList<>();
+        langs.add(CodingLanguage.Java);
+        GitHubRepository repository = GitHubApi.makeRepositoryFromObjects(repositoryJSON,langsList,commits);
+        Assert.assertEquals("Huffman coding implementation.",repository.getDescription());
+        Assert.assertEquals(Integer.valueOf(479650170),repository.getRepositoryID());
+        Assert.assertEquals("https://github.com/Next3K/Huffman-coding",repository.getUrl());
+        Assert.assertEquals(langs,repository.getCodingLanguages());
+    }
 
 }
