@@ -93,50 +93,50 @@ public class GitHubApi {
     public static List<GitHubCommit> getCommitsInfo(String username, String repoName){
         List<GitHubCommit> commitsList = new ArrayList<>();
         String commitResponse = getCommitList(username,repoName);
-        System.out.println("sdadsaadsa");
         JSONArray commits = new JSONArray(commitResponse);
         for (int i = 0; i < commits.length(); i++) {
             JSONObject commitObject = commits.getJSONObject(i);
-            if (commitObject.has("author") && !commitObject.isNull("author")) {
-                String authorName = commitObject.getJSONObject("author").getString("login");
-                if (!authorName.equals(username)) continue;
-            }
-            else {
-                continue;
-            }
-            String committerName = commitObject.getJSONObject("commit").getJSONObject("committer").getString("name");
-            String commitMsg = commitObject.getJSONObject("commit").getString("message");
-            String sha = commitObject.getString("sha");
-            String html_commmit_url = commitObject.getString("html_url");
             String api_commit_url = commitObject.getString("url");
-
-            String individualCommitResponse = getStats(api_commit_url);
-            JSONObject individualCommitObject = new JSONObject(individualCommitResponse);
-            Integer addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
-            Integer deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
-
-            GitHubCommit gitHubCommit = new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
-            commitsList.add(gitHubCommit);
+            String details = getStats(api_commit_url);
+            JSONObject detailedCommitObject = new JSONObject(details);
+            commitsList.add(makeCommitFromObjects(commitObject,detailedCommitObject));
         }
         return commitsList;
     }
 
+    public static GitHubCommit makeCommitFromObjects(JSONObject commitObject, JSONObject detailedStatsObject){
+        if (commitObject.has("author") && !commitObject.isNull("author")) {
+            String authorName = commitObject.getJSONObject("author").getString("login");
+        }
+        String committerName = commitObject.getJSONObject("commit").getJSONObject("committer").getString("name");
+        String commitMsg = commitObject.getJSONObject("commit").getString("message");
+        String sha = commitObject.getString("sha");
+        String html_commmit_url = commitObject.getString("html_url");
+        Integer addedLines = detailedStatsObject.getJSONObject("stats").getInt("additions");
+        Integer deletedLines = detailedStatsObject.getJSONObject("stats").getInt("deletions");
+        return new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
+    }
+
     public static GitHubRepository getRepoInfo(String username, String repoName){
-        GitHubRepository gitHubRepository = new GitHubRepository();
         String repositoryResponse = getRepo(username,repoName);
         JSONObject repositoryObject = new JSONObject(repositoryResponse);
         String languagesResponse = getLangs(username,repoName);
         JSONObject languagesObject = new JSONObject(languagesResponse);
+        List<GitHubCommit> commits = getCommitsInfo(username, repoName);
+        return makeRepositoryFromObjects(repositoryObject,languagesObject,commits);
+    }
+
+    public static GitHubRepository makeRepositoryFromObjects(JSONObject repositoryObject,JSONObject languagesObject,List<GitHubCommit> commits){
         List<String> languages = new ArrayList<>(languagesObject.keySet());
         List<CodingLanguage> enumLanguages = new ArrayList<>();
         for (String lang : languages) {
             switch (lang){
                 case "C++": lang = "Cpp";
-                break;
+                    break;
                 case "C#": lang = "Csharp";
-                break;
+                    break;
                 case "Objective-C": lang = "Objective_C";
-                break;
+                    break;
             }
             try {
                 CodingLanguage enumValue = CodingLanguage.valueOf(lang);
@@ -145,11 +145,11 @@ public class GitHubApi {
             catch (Exception ignored) {
             }
         }
+        GitHubRepository gitHubRepository = new GitHubRepository();
         gitHubRepository.setDescription(repositoryObject.get("description").toString());
         gitHubRepository.setRepositoryID(repositoryObject.getInt("id"));
         gitHubRepository.setUrl(repositoryObject.getString("html_url"));
         gitHubRepository.setCodingLanguages(enumLanguages);
-        gitHubRepository.setCommits(getCommitsInfo(username, repoName));
         return gitHubRepository;
     }
 
