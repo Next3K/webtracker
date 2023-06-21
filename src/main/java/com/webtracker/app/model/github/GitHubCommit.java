@@ -25,7 +25,7 @@ public class GitHubCommit extends AbstractEntity {
     private String committerName;
 
     @NotBlank(message = "Commit message cannot be blank")
-    @Column(name = "commit_message")
+    @Column(name = "commit_message", length = 2500)
     private String commitMessage;
 
     @NotBlank(message = "Commit sha cannot be blank")
