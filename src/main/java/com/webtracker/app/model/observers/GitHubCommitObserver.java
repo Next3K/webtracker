@@ -32,17 +32,23 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
         super(interestingLanguages, oldState, client);
     }
 
+    public void setOldState(GitHubState oldState) {
+        this.oldState = oldState;
+    }
+
     @Override
-    protected List<Event> detectEvents(GitHubState newState) {
+    public List<Event> detectEvents(GitHubState newState) {
         // check what has changed
-        List<GitHubCommit> newCommits = new ArrayList<>();
+        List<GitHubCommit> newStateCommits = new ArrayList<>();
         for (GitHubRepository repo : newState.getRepositories()) {
-            newCommits.addAll(repo.getCommits());
+            newStateCommits.addAll(repo.getCommits());
         }
 
         List<GitHubCommit> oldCommits = new ArrayList<>();
-        for (GitHubRepository repo : this.oldState.getRepositories()) {
-            oldCommits.addAll(repo.getCommits());
+        if (this.oldState != null) {
+            for (GitHubRepository repo : this.oldState.getRepositories()) {
+                oldCommits.addAll(repo.getCommits());
+            }
         }
 
         // create events based on the changes
@@ -50,7 +56,7 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
         Set<String> oldCommitsIds = oldCommits.stream().map(GitHubCommit::getCommitSha).collect(Collectors.toSet());
 
-        newCommits = newCommits.stream().filter(gitHubCommit -> !oldCommitsIds.contains(gitHubCommit.getCommitSha())).toList();
+        List<GitHubCommit> newCommits = newStateCommits.stream().filter(gitHubCommit -> !oldCommitsIds.contains(gitHubCommit.getCommitSha())).toList();
 
         if (!newCommits.isEmpty()) {
             log.info("New commits detected");
@@ -59,9 +65,8 @@ public class GitHubCommitObserver extends Observer<GitHubState> {
 
             List<GitHubCommit> filteredCommits = new ArrayList<>();
 
-            for (GitHubRepository repo : filteredRepositories) {
-                List<GitHubCommit> finalNewCommits = newCommits;
-                repo.getCommits().forEach(commit -> finalNewCommits.forEach(newCommit -> {
+            for (GitHubRepository repo: filteredRepositories) {
+                repo.getCommits().forEach(commit -> newCommits.forEach(newCommit -> {
                     if (newCommit.getCommitSha().equals(commit.getCommitSha())) {
                         filteredCommits.add(commit);
                     }
