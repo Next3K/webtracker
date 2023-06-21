@@ -1,7 +1,6 @@
 package com.webtracker.app.service;
 
 import com.webtracker.app.model.github.*;
-import lombok.extern.java.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,23 +22,53 @@ import java.util.Objects;
 public class GitHubApi {
     private static String USERNAME;
     private static String TOKEN;
+
     @Value("${credentials.github.username}")
     public void setUsernameStatic(String username) {
         GitHubApi.USERNAME = username;
     }
+
     @Value("${credentials.github.token}")
     public void setTokenStatic(String token) {
         GitHubApi.TOKEN = token;
     }
-    public static GitHubState callApi(GitHubOwner owner){
+
+    public static String getUserRepos(String username) {
+        return call("https://api.github.com/users/" + username + "/repos");
+    }
+
+    public static String getAccountDescription(String username) {
+        String userResponse = call("https://api.github.com/users/" + username);
+        JSONObject user = new JSONObject(userResponse);
+        if (user.isNull("bio")) return "";
+        return user.getString("bio");
+    }
+
+    public static String getCommitList(String username, String repoName) {
+        return call("https://api.github.com/repos/" + username + "/" + repoName + "/commits");
+    }
+
+    public static String getRepo(String username, String repoName) {
+        return call("https://api.github.com/repos/" + username + "/" + repoName);
+    }
+
+    public static String getLangs(String username, String repoName) {
+        return call("https://api.github.com/repos/" + username + "/" + repoName + "/languages");
+    }
+
+    public static String getStats(String url) {
+        return call(url);
+    }
+
+    public static GitHubState callApi(GitHubOwner owner) {
         List<GitHubRepository> repositoriesList = new ArrayList<>();
         String username = owner.getUsername();
-        String repositoriesResponse = call("https://api.github.com/users/"+username+"/repos");
+        String repositoriesResponse = getUserRepos(username);
         JSONArray repositories = new JSONArray(repositoriesResponse);
         for (int i = 0; i < repositories.length(); i++) {
             JSONObject repo = repositories.getJSONObject(i);
             String repoName = repo.getString("name");
-            repositoriesList.add(getRepoInfo(username,repoName));
+            repositoriesList.add(getRepoInfo(username, repoName));
         }
         GitHubState gitHubState = new GitHubState();
         gitHubState.setOwner(owner);
@@ -47,15 +76,12 @@ public class GitHubApi {
         gitHubState.setRepositories(repositoriesList);
         return gitHubState;
     }
-    public static String getAccountDescription(String username) {
-        String userResponse = call("https://api.github.com/users/"+username);
-        JSONObject user = new JSONObject(userResponse);
-        return user.getString("bio");
-    }
-    public static String call(String url){
+
+
+    public static String call(String url) {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
                 .header("Authorization", "Basic " + encodeCredentials(USERNAME, TOKEN))
-                .method("GET",HttpRequest.BodyPublishers.noBody()).build();
+                .method("GET", HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = null;
         try {
@@ -66,65 +92,70 @@ public class GitHubApi {
         return Objects.requireNonNull(response).body();
     }
 
-    public static List<GitHubCommit> getCommitsInfo(String username, String repoName){
+    public static List<GitHubCommit> getCommitsInfo(String username, String repoName) {
         List<GitHubCommit> commitsList = new ArrayList<>();
-        String commitResponse = call("https://api.github.com/repos/"+username+"/"+repoName+"/commits");
+        String commitResponse = getCommitList(username, repoName);
         JSONArray commits = new JSONArray(commitResponse);
         for (int i = 0; i < commits.length(); i++) {
             JSONObject commitObject = commits.getJSONObject(i);
-            if (commitObject.has("author") && !commitObject.isNull("author")) {
-                String authorName = commitObject.getJSONObject("author").getString("login");
-                if (!authorName.equals(username)) continue;
-            }
-            else {
-                continue;
-            }
-            String committerName = commitObject.getJSONObject("commit").getJSONObject("committer").getString("name");
-            String commitMsg = commitObject.getJSONObject("commit").getString("message");
-            String sha = commitObject.getString("sha");
-            String html_commmit_url = commitObject.getString("html_url");
             String api_commit_url = commitObject.getString("url");
-
-            String individualCommitResponse = call(api_commit_url);
-            JSONObject individualCommitObject = new JSONObject(individualCommitResponse);
-            Integer addedLines = individualCommitObject.getJSONObject("stats").getInt("additions");
-            Integer deletedLines = individualCommitObject.getJSONObject("stats").getInt("deletions");
-
-            GitHubCommit gitHubCommit = new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
-            commitsList.add(gitHubCommit);
+            String details = getStats(api_commit_url);
+            JSONObject detailedCommitObject = new JSONObject(details);
+            commitsList.add(makeCommitFromObjects(commitObject, detailedCommitObject));
         }
         return commitsList;
+
     }
 
-    public static GitHubRepository getRepoInfo(String username, String repoName){
-        GitHubRepository gitHubRepository = new GitHubRepository();
-        String repositoryResponse = call("https://api.github.com/repos/"+username+"/"+repoName);
+    public static GitHubCommit makeCommitFromObjects(JSONObject commitObject, JSONObject detailedStatsObject) {
+        if (commitObject.has("author") && !commitObject.isNull("author")) {
+            String authorName = commitObject.getJSONObject("author").getString("login");
+        }
+        String committerName = commitObject.getJSONObject("commit").getJSONObject("committer").getString("name");
+        String commitMsg = commitObject.getJSONObject("commit").getString("message");
+        String sha = commitObject.getString("sha");
+        String html_commmit_url = commitObject.getString("html_url");
+        Integer addedLines = detailedStatsObject.getJSONObject("stats").getInt("additions");
+        Integer deletedLines = detailedStatsObject.getJSONObject("stats").getInt("deletions");
+        return new GitHubCommit(committerName, commitMsg, sha, html_commmit_url, addedLines, deletedLines);
+    }
+
+    public static GitHubRepository getRepoInfo(String username, String repoName) {
+        String repositoryResponse = getRepo(username, repoName);
         JSONObject repositoryObject = new JSONObject(repositoryResponse);
-        String languagesResponse = call("https://api.github.com/repos/"+username+"/"+repoName+"/languages");
+        String languagesResponse = getLangs(username, repoName);
         JSONObject languagesObject = new JSONObject(languagesResponse);
         List<String> languages = new ArrayList<>(languagesObject.keySet());
+        List<GitHubCommit> commits = getCommitsInfo(username, repoName);
+        return makeRepositoryFromObjects(repositoryObject, languages, commits);
+    }
+
+    public static GitHubRepository makeRepositoryFromObjects(JSONObject repositoryObject, List<String> languages, List<GitHubCommit> commits) {
         List<CodingLanguage> enumLanguages = new ArrayList<>();
         for (String lang : languages) {
-            switch (lang){
-                case "C++": lang = "Cpp";
-                break;
-                case "C#": lang = "Csharp";
-                break;
-                case "Objective-C": lang = "Objective_C";
-                break;
+            switch (lang) {
+                case "C++":
+                    lang = "Cpp";
+                    break;
+                case "C#":
+                    lang = "Csharp";
+                    break;
+                case "Objective-C":
+                    lang = "Objective_C";
+                    break;
             }
             try {
                 CodingLanguage enumValue = CodingLanguage.valueOf(lang);
                 enumLanguages.add(enumValue);
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
             }
         }
+        GitHubRepository gitHubRepository = new GitHubRepository();
         gitHubRepository.setDescription(repositoryObject.get("description").toString());
         gitHubRepository.setRepositoryID(repositoryObject.getInt("id"));
         gitHubRepository.setUrl(repositoryObject.getString("html_url"));
         gitHubRepository.setCodingLanguages(enumLanguages);
-        gitHubRepository.setCommits(getCommitsInfo(username, repoName));
+        gitHubRepository.setCommits(commits);
         return gitHubRepository;
     }
 
