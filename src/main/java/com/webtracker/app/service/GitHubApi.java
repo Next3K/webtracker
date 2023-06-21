@@ -72,6 +72,7 @@ public class GitHubApi {
         gitHubState.setOwner(owner);
         gitHubState.setGitHubAccountDescription(getAccountDescription(username));
         gitHubState.setRepositories(repositoriesList);
+        System.out.println(gitHubState);
         return gitHubState;
     }
 
@@ -103,6 +104,7 @@ public class GitHubApi {
             commitsList.add(makeCommitFromObjects(commitObject,detailedCommitObject));
         }
         return commitsList;
+
     }
 
     public static GitHubCommit makeCommitFromObjects(JSONObject commitObject, JSONObject detailedStatsObject){
@@ -151,6 +153,7 @@ public class GitHubApi {
         gitHubRepository.setRepositoryID(repositoryObject.getInt("id"));
         gitHubRepository.setUrl(repositoryObject.getString("html_url"));
         gitHubRepository.setCodingLanguages(enumLanguages);
+        gitHubRepository.setCommits(commits);
         return gitHubRepository;
     }
 
