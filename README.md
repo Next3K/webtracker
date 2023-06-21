@@ -51,6 +51,8 @@ To install and run the application, follow these steps:
 - -Dspring.mail.password=MAIL_PASSWORD: Provide the password for the email account used as the sender's credentials.
 - -Dspring.mail.host=HOST_EMAIL: Set the host address for the email service provider.
 - -Dspring.mail.port=PORT: Specify the port number to be used for the email service.
+- -Dcredentials.github.username=GITHUB_USERNAME: Specify the username of account used for GitHub api authentication.
+- -Dcredentials.github.token=GITHUB_TOKEN: Provide the authentication token for the GITHUB_USERNAME account.
 6.  Build the project using Maven.
 7.  Run the application.
 

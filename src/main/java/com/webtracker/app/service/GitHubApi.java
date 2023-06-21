@@ -4,6 +4,8 @@ import com.webtracker.app.model.github.*;
 import lombok.extern.java.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,14 +19,18 @@ import java.util.List;
 import java.util.Objects;
 
 
+@RestController
 public class GitHubApi {
-
-    private GitHubApi() {
-        throw new IllegalStateException("Utility class");
+    private static String USERNAME;
+    private static String TOKEN;
+    @Value("${credentials.github.username}")
+    public void setUsernameStatic(String username) {
+        GitHubApi.USERNAME = username;
     }
-
-    private static final String USERNAME = "";
-    private static final String TOKEN = "";
+    @Value("${credentials.github.token}")
+    public void setTokenStatic(String token) {
+        GitHubApi.TOKEN = token;
+    }
     public static GitHubState callApi(GitHubOwner owner){
         List<GitHubRepository> repositoriesList = new ArrayList<>();
         String username = owner.getUsername();
