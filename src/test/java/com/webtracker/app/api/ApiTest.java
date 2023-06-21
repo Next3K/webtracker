@@ -23,10 +23,10 @@ public class ApiTest {
 
     @Before
     public void init() throws IOException, JSONException {
-        testJSON=parser.makeObject("src/test/java/com/webtracker/app/api/commit.json");
-        statsJSON=parser.makeObject("src/test/java/com/webtracker/app/api/detailedCommit.json");
-        langsJSON=parser.makeObject("src/test/java/com/webtracker/app/api/langs.json");
-        repositoryJSON=parser.makeObject("src/test/java/com/webtracker/app/api/repository.json");
+        testJSON=parser.makeObject("src/test/resources/commit.json");
+        statsJSON=parser.makeObject("src/test/resources/detailedCommit.json");
+        langsJSON=parser.makeObject("src/test/resources/langs.json");
+        repositoryJSON=parser.makeObject("src/test/resources/repository.json");
         langsList = new ArrayList<>();
         Iterator<String> iterator = langsJSON.keys();
         while(iterator.hasNext()){
