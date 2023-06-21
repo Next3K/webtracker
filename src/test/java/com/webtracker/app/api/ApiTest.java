@@ -2,42 +2,48 @@ package com.webtracker.app.api;
 
 import com.webtracker.app.model.github.*;
 import com.webtracker.app.service.GitHubApi;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+
 public class ApiTest {
+    private JSONObject testJSON;
+    private JSONObject statsJSON;
+    private JSONObject repositoryJSON;
+    private JSONObject langsJSON;
 
+    private List<String> langsList;
 
-    @Test
-
-    public void commitInfoWorksGood(){
-        try(MockedStatic<GitHubApi> api = Mockito.mockStatic(GitHubApi.class)){
-            api.when(()->GitHubApi.getUserRepos("user")).thenReturn("[{\"name\": \"repoName\"}]");
-            api.when(()->GitHubApi.getRepo("user","repoName")).thenReturn("{\"description\": \"test description\",\"id\":1,\"html_url\": \"testUrl\"}");
-            api.when(()->GitHubApi.getLangs("user","repoName")).thenReturn("{\"Java\": 1}");
-            api.when(()->GitHubApi.getCommitList("user","repoName")).thenReturn("[{\"author\":{\"login\": \"login\"},\"commit\":{\"commiter\":{\"name\": \"name\"},\"message\": \"message\"},\"sha\": \"abc\",\"html_url\":\"htmlURL\",\"url\":\"url\" }]");
-            api.when(()->GitHubApi.getStats("url")).thenReturn("{\"stats\": { \"total\": 2,\"additions\":1,\"deletions\":1}}");
-            api.when(()->GitHubApi.getAccountDescription("user")).thenReturn("account");
+    @Before
+    public void init() throws IOException, JSONException {
+        testJSON=parser.makeObject("src/test/java/com/webtracker/app/api/commit.json");
+        statsJSON=parser.makeObject("src/test/java/com/webtracker/app/api/detailedCommit.json");
+        langsJSON=parser.makeObject("src/test/java/com/webtracker/app/api/langs.json");
+        repositoryJSON=parser.makeObject("src/test/java/com/webtracker/app/api/repository.json");
+        langsList = new ArrayList<>();
+        Iterator<String> iterator = langsJSON.keys();
+        while(iterator.hasNext()){
+            langsList.add(iterator.next());
         }
-        GitHubCommit commit = new GitHubCommit("name","message","abc","url",1,1);
-        List<GitHubCommit> commits = new ArrayList<>();
-        commits.add(commit);
-        List<CodingLanguage> langs = new ArrayList<>();
-        CodingLanguage enumValue = CodingLanguage.valueOf("Java");
-        langs.add(enumValue);
-        GitHubRepository repo = new GitHubRepository(1L,commits,langs,"test description",1,"testUrl");
-        List <GitHubRepository> repos = new ArrayList<>();
-        repos.add(repo);
-        GitHubOwner owner = new GitHubOwner(1L,"name","surname","user","abc@abc.xyz");
-        GitHubState state = new GitHubState(1L,"account",owner,repos);
-
-
-
     }
+    @Test
+    public void checkGitHubCommitFromObjectMethod(){
+        GitHubCommit commit = GitHubApi.makeCommitFromObjects(testJSON,statsJSON);
+        Assert.assertEquals("GitHub",commit.getCommitterName());
+        Assert.assertEquals("Update README.md",commit.getCommitMessage());
+        Assert.assertEquals("bc85278e6cb41dcf3f5f31e6c2bfdaf2f7805781",commit.getCommitSha());
+        Assert.assertEquals("https://github.com/Next3K/3DES-cipher/commit/bc85278e6cb41dcf3f5f31e6c2bfdaf2f7805781",commit.getUrl());
+        Assert.assertEquals((Integer)0,commit.getAddedLines());
+        Assert.assertEquals((Integer)1,commit.getDeletedLines());
+    }
+
 
 }
