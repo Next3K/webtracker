@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 @RestController
@@ -122,12 +123,12 @@ public class GitHubApi {
         JSONObject repositoryObject = new JSONObject(repositoryResponse);
         String languagesResponse = getLangs(username,repoName);
         JSONObject languagesObject = new JSONObject(languagesResponse);
+        List<String> languages = new ArrayList<>(languagesObject.keySet());
         List<GitHubCommit> commits = getCommitsInfo(username, repoName);
-        return makeRepositoryFromObjects(repositoryObject,languagesObject,commits);
+        return makeRepositoryFromObjects(repositoryObject,languages,commits);
     }
 
-    public static GitHubRepository makeRepositoryFromObjects(JSONObject repositoryObject,JSONObject languagesObject,List<GitHubCommit> commits){
-        List<String> languages = new ArrayList<>(languagesObject.keySet());
+    public static GitHubRepository makeRepositoryFromObjects(JSONObject repositoryObject,List<String> languages,List<GitHubCommit> commits){
         List<CodingLanguage> enumLanguages = new ArrayList<>();
         for (String lang : languages) {
             switch (lang){
